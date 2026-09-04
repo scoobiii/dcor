@@ -1,5 +1,7 @@
 # DCOR — Data Center Optimization & Reduction
 
+![DCOR CI](https://github.com/scoobiii/dcor/actions/workflows/ci.yml/badge.svg)
+
 **Connect. Measure. Simulate. Optimize. Verify.**
 
 DCOR is a vendor-neutral platform for data-center energy, cooling, cost, carbon and operational optimization. **DCOR is the product/platform name; connectors, services and optimization engines are independently evolvable components.**
@@ -32,12 +34,12 @@ flowchart LR
 
 ## Delivery monitor
 
-The table below is the **living delivery contract**. Every sprint is advanced only after its implementation, tests and validation are committed and pushed. The CI workflow runs on every push and records the state of the repository. GitHub Actions supports push-triggered workflows, matrix jobs and status badges. citeturn0search5turn0search2turn0search0
+This table is the **living delivery contract**. Status changes only when the corresponding implementation, tests, CI validation and evidence exist. The CI badge above is the live repository-level gate; GitHub Actions supports push triggers, matrix jobs and workflow status badges.
 
 | Sprint | Scope | Status | Exit evidence |
 |---|---|---|---|
 | S0 | Baseline, audit, reproducibility, CI skeleton | **IN PROGRESS** | audit + CI + tests |
-| S1 | Clean Architecture + canonical contracts | **PLANNED** | architecture + schema tests |
+| S1 | Clean Architecture + canonical contracts | **IN PROGRESS** | architecture + schema tests |
 | S2 | Universal Connector SDK | **IN PROGRESS** | SDK + contract tests |
 | S3 | Frontier connector | **PLANNED** | adapter + fixture + validation |
 | S4 | NLR/DOE connector | **PLANNED** | adapter + fixture + validation |
@@ -49,7 +51,11 @@ The table below is the **living delivery contract**. Every sprint is advanced on
 | S10 | Savings verification + safety/control | **PLANNED** | verified savings + policy gates |
 | S11 | SaaS, fleet, observability, production hardening | **PLANNED** | release gate + production checklist |
 
-**Rule:** a sprint is not marked complete because code exists. It requires implementation + automated tests + CI validation + documented exit evidence.
+### Progress rule
+
+`PLANNED → IN PROGRESS → CI VALIDATED → DONE`.
+
+A sprint cannot become `DONE` merely because code was committed. The exit evidence must be present and the push must pass the CI gate. This makes the README a durable progress monitor through the final S11 delivery.
 
 ### Commit/push protocol
 
@@ -57,10 +63,16 @@ The table below is the **living delivery contract**. Every sprint is advanced on
 - `feat(s1): define architecture and canonical model`
 - `feat(s2): implement connector sdk`
 - `feat(s3): add frontier connector`
-- …
+- `feat(s4): add nlr doe connector`
+- `feat(s5): add csv parquet connectors`
+- `feat(s6): add mqtt rest connectors`
+- `feat(s7): add digital twin and baseline`
+- `feat(s8): add optimization engines`
+- `feat(s9): add dqn and rl benchmark`
+- `feat(s10): add verification and governed control`
 - `feat(s11): production hardening and release gate`
 
-Each push to `main` executes the CI gate. Test/build outputs may be retained as workflow artifacts for diagnosis and auditing. citeturn0search1
+Every push to `main` executes the CI test matrix and sprint delivery gate. Test and coverage outputs can be retained as workflow artifacts for diagnosis/audit.
 
 ## First canonical telemetry contract
 
@@ -103,7 +115,7 @@ The original Deep Q-Learning work is retained as research input rather than as t
 
 ## Standards and governance
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md) and [BACKLOG.md](BACKLOG.md).
+See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md) and [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md).
 
 ## Repository layout
 
@@ -114,15 +126,15 @@ packages/             stable contracts and reusable libraries
 connectors/           source/protocol adapters
 digital-twin/         simulation and replay
 datasets/             manifests/fixtures, not uncontrolled data dumps
-research/              research adapters and experiments
-hardware-lab/          physical/edge experiments
-docs/                  architecture, standards and runbooks
-benchmarks/            scientific comparisons
+research/             research adapters and experiments
+hardware-lab/         physical/edge experiments
+docs/                 architecture, standards and runbooks
+benchmarks/           scientific comparisons
 tests/                 cross-component tests
-infra/                  deployment and operations
-.github/workflows/     CI gates
+infra/                 deployment and operations
+.github/workflows/    CI gates
 ```
 
 ## Status
 
-This repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.**
+**Current gate: S0/S1/S2 foundation in progress.** The repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.**
