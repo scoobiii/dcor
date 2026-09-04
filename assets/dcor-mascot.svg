@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Otto, DCOR mascot</title>
+  <desc id="desc">A friendly otter wearing a technical visor and holding a lightning-marked tablet, representing efficient data-center operations, cooling and optimization.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#071a33"/><stop offset="1" stop-color="#0a6f78"/></linearGradient>
+    <linearGradient id="suit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#123d70"/><stop offset="1" stop-color="#0b213f"/></linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="244" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#20d8e8" stroke-width="8" opacity=".65"/>
+  <path d="M132 330c-24 65-13 111 31 123 31 9 58-11 72-47" fill="#704b3b" stroke="#3d2a25" stroke-width="8"/>
+  <path d="M183 187c-13-35 7-71 43-77 36-7 88-3 111 19 26 25 30 67 9 99l-13 21H194z" fill="#805747" stroke="#3d2a25" stroke-width="9"/>
+  <ellipse cx="221" cy="174" rx="42" ry="48" fill="#a8755e"/>
+  <ellipse cx="294" cy="174" rx="42" ry="48" fill="#a8755e"/>
+  <ellipse cx="256" cy="222" rx="83" ry="73" fill="#9a6855" stroke="#3d2a25" stroke-width="7"/>
+  <ellipse cx="256" cy="237" rx="48" ry="35" fill="#d49b7e"/>
+  <ellipse cx="226" cy="208" rx="10" ry="13" fill="#07131f"/>
+  <ellipse cx="286" cy="208" rx="10" ry="13" fill="#07131f"/>
+  <circle cx="229" cy="204" r="3" fill="white"/><circle cx="289" cy="204" r="3" fill="white"/>
+  <ellipse cx="256" cy="227" rx="17" ry="12" fill="#35231f"/>
+  <path d="M229 249c17 19 37 19 54 0" fill="none" stroke="#35231f" stroke-width="7" stroke-linecap="round"/>
+  <path d="M176 165c19-45 141-49 165 3l-9 27H185z" fill="#0b1729" stroke="#20d8e8" stroke-width="8"/>
+  <path d="M204 160h104" stroke="#67f4ff" stroke-width="8" stroke-linecap="round"/>
+  <path d="M182 292c-9 31-5 83 21 112 34 38 72 49 112 44 42-5 75-30 82-73 4-25 0-55-11-83-42 19-158 20-204 0z" fill="url(#suit)" stroke="#061629" stroke-width="9"/>
+  <path d="M256 315l-15 30h18l-11 32 36-43h-20l15-19z" fill="#36e5f2"/>
+  <rect x="316" y="304" width="104" height="136" rx="16" transform="rotate(-9 316 304)" fill="#102f52" stroke="#20d8e8" stroke-width="7"/>
+  <rect x="332" y="321" width="72" height="95" rx="8" transform="rotate(-9 332 321)" fill="#061a31"/>
+  <path d="M363 342l-10 20h12l-8 22 26-31h-13l10-13z" fill="#ffd447"/>
+  <path d="M169 317c-25 4-38 25-31 43 6 17 28 23 48 13" fill="#805747" stroke="#3d2a25" stroke-width="8"/>
+  <path d="M338 454c14-14 30-16 45-7" fill="none" stroke="#20d8e8" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+</svg>
