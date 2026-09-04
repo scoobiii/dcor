@@ -2,6 +2,8 @@
 
 ![DCOR CI](https://github.com/scoobiii/dcor/actions/workflows/ci.yml/badge.svg)
 
+**English | [Português](docs/project/README.pt-br.md) | [Español](docs/project/README.es.md) | [Français](docs/project/README.fr.md) | [日本語](docs/project/README.ja.md) | [简体中文](docs/project/README.zh.md)**
+
 **Connect. Measure. Simulate. Optimize. Verify.**
 
 **Open, vendor-neutral, polyglot by boundary, and test-gated by contract.**
@@ -134,58 +136,7 @@ This table is the **living delivery contract**. Status changes only when the cor
 
 A sprint cannot become `DONE` merely because code was committed. The required files must exist, tests must pass, package coverage must meet **100%**, and the CI gate must validate the commit. LOC is monitored as engineering telemetry, **not as a quality or completion criterion**.
 
-### Delivery completeness
-
-DCOR is considered **fully delivered only when S0–S11 are DONE** and the final release gate confirms:
-
-- all required repository artifacts are present;
-- every sprint has its defined exit evidence;
-- local gate passes;
-- CI passes across the supported Python matrix;
-- production package coverage is **100%**;
-- compatibility claims are backed by executed environment validation;
-- test and coverage artifacts are retained for audit/diagnosis where applicable.
-
-## Commit/push protocol
-
-- `feat(s0): establish dcor baseline and delivery contract`
-- `feat(s1): define architecture and canonical model`
-- `feat(s2): implement connector sdk`
-- `feat(s3): add frontier connector`
-- `feat(s4): add nlr doe connector`
-- `feat(s5): add csv parquet connectors`
-- `feat(s6): add mqtt rest connectors`
-- `feat(s7): add digital twin and baseline`
-- `feat(s8): add optimization engines`
-- `feat(s9): add dqn and rl benchmark`
-- `feat(s10): add verification and governed control`
-- `feat(s11): production hardening and release gate`
-
-Every push to `main` executes the CI test matrix and sprint delivery gate. Test and coverage outputs can be retained as workflow artifacts for diagnosis/audit.
-
-## First canonical telemetry contract
-
-The platform normalizes source-specific records into a stable envelope. Source lineage is preserved; the optimization domain does not depend on the source protocol.
-
-```json
-{
-  "timestamp": "2026-09-04T15:00:00Z",
-  "facility_id": "dc-001",
-  "metric": "it_power_kw",
-  "value": 842.3,
-  "unit": "kW",
-  "source": "example",
-  "quality": "GOOD",
-  "confidence": 1.0,
-  "lineage": {"connector": "example", "record_id": "r-001"}
-}
-```
-
-See [Canonical Data Model](docs/CANONICAL_DATA_MODEL.md).
-
 ## Connector roadmap
-
-Priority implementation order:
 
 1. Frontier telemetry
 2. NLR/DOE PUE telemetry
@@ -194,11 +145,9 @@ Priority implementation order:
 5. REST
 6. Additional BMS/DCIM/SCADA/EPMS adapters
 
-The first five are adapters over the same Connector SDK and canonical contract.
-
 ## Research and optimization
 
-The original Deep Q-Learning work is retained as research input rather than as the platform architecture. Optimization will be benchmarked in this order:
+Optimization will be benchmarked in this order:
 
 **baseline → rules → PID/MPC/MILP → DQN → Double/Dueling DQN → PPO/SAC**, with workload, thermal, equipment, SLA, cost, carbon and water constraints represented explicitly.
 
