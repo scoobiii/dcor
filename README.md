@@ -83,6 +83,61 @@ The contracts are defined in:
 
 **Important:** illustrative values are not product results. DCOR must distinguish `POTENTIAL`, `PREDICTED`, `EXECUTED` and `VERIFIED` states, and only verified results may be presented as realized savings.
 
+## MV1 — 800 VDC + liquid cooling
+
+The next product-value frontier is **MV1 — Power-Thermal Co-Optimization for high-density AI infrastructure**.
+
+The industry is moving toward 800 VDC for next-generation AI data-center power distribution while high-density compute is simultaneously driving direct-to-chip liquid cooling. OCP reports active work by Google, Microsoft and NVIDIA toward common 800 VDC requirements; NVIDIA describes the architecture as reducing conversion stages and distribution losses. DCOR uses this as an open, vendor-neutral optimization regime rather than a vendor implementation. citeturn0search1turn0search0
+
+```text
+                 AI FACTORY
+                     │
+             ┌───────┴────────┐
+             │                │
+          800 VDC         LIQUID COOLING
+             │                │
+       Power distribution   Direct-to-chip
+             │                │
+             └───────┬────────┘
+                     │
+              POWER + THERMAL
+               CO-OPTIMIZATION
+                     │
+                  DCOR
+```
+
+Reference high-density topology:
+
+```text
+MV / Grid
+   ↓
+AC→800 VDC conversion
+   ↓
+800 VDC distribution
+   ↓
+DC/DC + compute rack
+   ↓
+GPU / CPU
+   ↓
+Direct-to-chip liquid
+   ↓
+TCS / CDU
+   ↓
+Facility cooling loop
+   ↓
+Dry cooler / Chiller / Optional evaporative assist
+```
+
+**Design rule:** internal evaporative air cooling is not the primary thermal path in the high-density AI reference architecture. Legacy air/evaporative regimes remain representable for compatibility and historical benchmarking. External evaporative assistance may be evaluated as a heat-rejection option when climate, water, cost and reliability make it beneficial.
+
+The full boundary, regimes, telemetry, agent topology, counterfactual scenarios, evidence and safety rules are defined in [MV1 — 800 VDC + Liquid Cooling Power-Thermal Architecture](docs/POWER_THERMAL_800VDC.md).
+
+The key optimization question becomes:
+
+> **Given workload, rack density, power topology, liquid-cooling topology, weather and operational constraints, which combined electrical + thermal configuration minimizes facility energy/cost/carbon/water/risk while maintaining SLA and safety?**
+
+PUE remains useful but is not sufficient as the sole KPI. MV1 therefore evaluates conversion loss, cooling energy, water, thermal headroom, electrical risk, SLA risk and useful compute per facility kWh.
+
 ## Use cases and connector prioritization
 
 The product scope is anchored in concrete use cases rather than an unbounded adapter catalog. See [docs/USE_CASES.md](docs/USE_CASES.md) for PUE, cooling, water, cost, carbon, workload-aware optimization, anomaly detection, baseline verification, data quality and multi-site cases.
@@ -167,6 +222,7 @@ This table is the **living delivery contract**. Status changes only when the cor
 | S2 | Universal Connector SDK | **IN PROGRESS** | SDK + contract tests |
 | S3 | Frontier connector | **PLANNED** | adapter + fixture + validation |
 | **MV0** | First Verifiable Optimization | **PLANNED** | baseline + counterfactual + verification/evidence |
+| **MV1** | 800 VDC + liquid cooling co-optimization | **PLANNED** | coupled topology + counterfactual + deterministic optimization + evidence |
 | S4 | NLR/DOE connector | **PLANNED** | adapter + fixture + validation |
 | S5 | CSV/Parquet connector | **PLANNED** | ingestion + normalization tests |
 | S6 | MQTT + REST connectors | **PLANNED** | protocol contract tests |
@@ -189,6 +245,7 @@ The project now treats the following as first-class delivery artifacts:
 - **Replay** — deterministic recorded telemetry for regression, incident reproduction and algorithm comparison.
 - **Evidence** — machine-readable provenance for optimization predictions and verified savings.
 - **Benchmark** — common metrics for ingestion, normalization, quality, replay, baseline, optimization, safety, verification and performance.
+- **Power-thermal model** — coupled electrical/thermal scenarios for MV1.
 - **Audit revalidation** — external findings are snapshots and are reclassified as `OPEN`, `FIXED` or `SUPERSEDED` against current `HEAD`.
 
 ## Connector roadmap
@@ -204,13 +261,13 @@ The project now treats the following as first-class delivery artifacts:
 
 Optimization will be benchmarked in this order:
 
-**baseline → rules → PID/MPC/MILP → DQN → Double/Dueling DQN → PPO/SAC**, with workload, thermal, equipment, SLA, cost, carbon and water constraints represented explicitly.
+**baseline → rules → PID/MPC/MILP → power-thermal co-optimization → DQN → Double/Dueling DQN → PPO/SAC**, with workload, electrical, thermal, equipment, SLA, cost, carbon and water constraints represented explicitly.
 
-RL is not a substitute for validated data, replay, baselines or safety gates. Advanced RL work follows the first verifiable product path.
+RL is not a substitute for validated data, replay, baselines or safety gates. Advanced RL work follows the first verifiable product paths.
 
 ## Standards and governance
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md), [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md), [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md), and [docs/AUDIT_REVALIDATION.md](docs/AUDIT_REVALIDATION.md).
+See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md), [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md), [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md), [docs/POWER_THERMAL_800VDC.md](docs/POWER_THERMAL_800VDC.md), and [docs/AUDIT_REVALIDATION.md](docs/AUDIT_REVALIDATION.md).
 
 ## Repository layout
 
@@ -233,4 +290,4 @@ assets/               brand assets, including the DCOR mascot
 
 ## Status
 
-**Current gate: S0/S1/S2 foundation in progress.** The repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.** S3 and MV0 remain planned until their implementation and CI evidence exist.
+**Current gate: S0/S1/S2 foundation in progress.** The repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.** S3, MV0 and MV1 remain planned until their implementation and CI evidence exist.
