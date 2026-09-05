@@ -24,7 +24,9 @@ The optimizer must consider temperature, humidity, dew point, IT load, equipment
 
 ## Thermal operating envelope
 
-ASHRAE guidance is an **envelope/reference**, not a universal DCOR setpoint. The 2021 guidance introduced class H1 for high-density air-cooled servers, with a narrower recommended range of **18–22 °C** and allowable range of **15–25 °C**. General A-class guidance remains distinct. citeturn0search1turn0search19
+ASHRAE guidance is an **envelope/reference**, not a universal DCOR setpoint. The 2021 fifth edition introduced class H1 for high-density air-cooled servers, with a narrower recommended range of **18–22 °C** and an allowable dry-bulb range of **5–25 °C**. General A-class guidance remains distinct. citeturn0search1turn0search12
+
+The applicable ASHRAE class also includes humidity/dew-point and temporal constraints. DCOR therefore models **temperature pattern, rate of change, dew point and surface-temperature margin**, rather than using temperature alone. See [ASHRAE Thermal Patterns](docs/THERMAL_PATTERNS_ASHRAE.md). citeturn0search1
 
 Therefore DCOR must distinguish:
 
@@ -116,6 +118,7 @@ See:
 
 - [MV0](docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md)
 - [Thermal Optimization](docs/THERMAL_OPTIMIZATION.md)
+- [ASHRAE Thermal Patterns](docs/THERMAL_PATTERNS_ASHRAE.md)
 - [Historical Cooling Cases](docs/HISTORICAL_COOLING_CASES.md)
 - [Evidence Contract](docs/EVIDENCE_CONTRACT.md)
 - [Replay](docs/REPLAY.md)
@@ -171,9 +174,48 @@ See [BACKLOG.md](BACKLOG.md) and [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIF
 ## Repository layout
 
 ```text
-apps/ services/ packages/ connectors/
-digital-twin/ datasets/ research/ hardware-lab/
-docs/ benchmarks/ tests/ infra/ assets/
+apps/
+services/
+packages/
+connectors/
+
+digital-twin/
+datasets/
+research/
+hardware-lab/
+
+benchmarks/
+tests/
+infra/
+assets/
+
+docs/
+├── BENCHMARK.md
+├── CANONICAL_DATA_MODEL.md
+├── COMPATIBILITY.md
+├── CONNECTOR_ROI.md
+├── DELIVERY_MANIFEST.md
+├── DEVELOPMENT.md
+├── EVIDENCE_CONTRACT.md
+├── HISTORICAL_COOLING_CASES.md
+├── MV0_FIRST_VERIFIABLE_OPTIMIZATION.md
+├── OTTO_BRAND_SYSTEM.md
+├── REPLAY.md
+├── REUSE_MATRIX.md
+├── STANDARDS.md
+├── THERMAL_OPTIMIZATION.md
+├── THERMAL_PATTERNS_ASHRAE.md
+├── USE_CASES.md
+└── project/
+    ├── README.pt-br.md
+    ├── README.es.md
+    ├── README.fr.md
+    ├── README.ja.md
+    ├── README.zh.md
+    ├── README.ko.md
+    ├── README.vi.md
+    ├── README.id.md
+    └── README.it.md
 ```
 
 ## Non-goals
