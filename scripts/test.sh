@@ -41,9 +41,20 @@ test -s docs/CANONICAL_DATA_MODEL.md
 test -s docs/REUSE_MATRIX.md
 test -s docs/DEVELOPMENT.md
 test -s docs/COMPATIBILITY.md
+test -s docs/DELIVERY_MANIFEST.md
+test -s docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md
+test -s docs/EVIDENCE_CONTRACT.md
+test -s docs/REPLAY.md
+test -s docs/BENCHMARK.md
+test -s docs/USE_CASES.md
+test -s docs/CONNECTOR_ROI.md
+test -s docs/AUDIT_REVALIDATION.md
+test -s docs/OTTO_BRAND_SYSTEM.md
 grep -q 'S0' README.md
 grep -q 'S11' README.md
+grep -q 'MV0' README.md
 grep -q 'Connector SDK' BACKLOG.md
+grep -q 'EVIDENCE_CONTRACT' BACKLOG.md
 printf '%s\n' 'PASS'
 
 printf '%-22s' 'Tests'
@@ -54,4 +65,13 @@ printf '%-22s' 'Coverage'
 python -m coverage report --fail-under=100 >/dev/null
 printf '%s\n' 'PASS'
 
-printf '\n%s\n' 'DCOR LOCAL GATE: PASS'
+cat <<'EOF'
+
+      .----.
+   .-'  OTTO '-.
+  /  VERIFIED  \\
+  \  DCOR GATE /
+   '----------'
+
+EOF
+printf '%s\n' 'DCOR LOCAL GATE: PASS'
