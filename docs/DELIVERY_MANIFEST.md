@@ -17,6 +17,7 @@ LOC is tracked as an engineering telemetry signal, **not** as a completion crite
 | S2 | `src/dcor/connectors/`, connector tests | TBD | IN PROGRESS | SDK contract tests + 100% coverage |
 | S3 | Frontier connector + fixtures + validation | TBD | PLANNED | source replay + normalization evidence |
 | MV0 | `docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md`, `docs/EVIDENCE_CONTRACT.md`, `docs/REPLAY.md`, Frontier vertical slice | TBD | PLANNED | baseline + counterfactual + verified evidence |
+| **MV1** | `docs/POWER_THERMAL_800VDC.md`, coupled power/thermal topology model, replay/counterfactual scenarios, deterministic optimizer evidence | TBD | **PLANNED** | comparable topology scenarios + constraints + evidence/verification |
 | S4 | NLR/DOE connector + fixtures + validation | TBD | PLANNED | source replay + normalization evidence |
 | S5 | CSV/Parquet connectors + fixtures + validation | TBD | PLANNED | ingestion + normalization evidence |
 | S6 | MQTT + REST connectors + protocol fixtures | TBD | PLANNED | protocol contract evidence |
@@ -33,6 +34,9 @@ LOC is tracked as an engineering telemetry signal, **not** as a completion crite
 | `docs/USE_CASES.md` | Product/use-case definition |
 | `docs/CONNECTOR_ROI.md` | Connector scope and priority control |
 | `docs/BENCHMARK.md` | Performance/scientific comparison protocol |
+| `docs/EVIDENCE_CONTRACT.md` | Reproducible optimization evidence |
+| `docs/REPLAY.md` | Deterministic data reproduction |
+| `docs/POWER_THERMAL_800VDC.md` | 800 VDC + liquid cooling power-thermal architecture and MV1 exit criteria |
 | `docs/AUDIT_REVALIDATION.md` | External-audit snapshot revalidation |
 | `docs/OTTO_BRAND_SYSTEM.md` | Technical mascot and operational-state system |
 
@@ -52,4 +56,4 @@ The manifest intentionally uses `TBD` for future LOC until the implementation is
 
 ## Final delivery condition
 
-The project is **not fully delivered** until S0–S11 are `DONE`, every required artifact is present, all required tests pass, and the final CI gate reports 100% package coverage. MV0 is a product-value milestone, not a replacement for S0–S11. The README remains the human-facing monitor; this manifest is the detailed inventory.
+The project is **not fully delivered** until S0–S11 are `DONE`, every required artifact is present, all required tests pass, and the final CI gate reports 100% package coverage. MV0 and MV1 are product-value milestones, not replacements for S0–S11. The README remains the human-facing monitor; this manifest is the detailed inventory.
