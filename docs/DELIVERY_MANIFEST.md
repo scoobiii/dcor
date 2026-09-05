@@ -26,11 +26,12 @@ LOC is telemetry, never proof of completion.
 | S10 | verification + policy/control | PLANNED |
 | S11 | SaaS/fleet/production | PLANNED |
 
-## New documentation contract
+## Documentation contract
 
 | Artifact | Purpose |
 |---|---|
 | `docs/THERMAL_OPTIMIZATION.md` | thermal state, risk, TTU, psychrometrics and setpoint optimization |
+| `docs/THERMAL_PATTERNS_ASHRAE.md` | ASHRAE thermal envelope, humidity/dew point and temperature-pattern/rate-of-change semantics |
 | `docs/HISTORICAL_COOLING_CASES.md` | Prineville, Google/DeepMind, Google London and Oracle benchmark context |
 | `docs/BENCHMARK.md` | Benchmark 001 and common evaluation protocol |
 | `docs/STANDARDS.md` | standards hierarchy and H1 policy semantics |
