@@ -8,7 +8,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 
 **MV0 — First Verifiable Optimization** proves the core telemetry-to-evidence vertical slice before advanced optimization.
 
-**MV1 — 800 VDC + Liquid Cooling Power-Thermal Optimization** extends that proof into the AI-era high-density infrastructure boundary, where electrical distribution and thermal management must be evaluated as one coupled system.
+**MV1 — 800 VDC + Liquid Cooling Power-Thermal Optimization** extends that proof into the AI-era high-density infrastructure boundary, where electrical distribution and thermal management are evaluated as one coupled system.
 
 | Milestone | Deliverable | Exit criteria | Status |
 |---|---|---|---|
@@ -16,7 +16,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 | S1 | Architecture + standards + canonical model | schemas, invariants and tests | IN PROGRESS |
 | S2 | Connector SDK | lifecycle, errors, quality, lineage, contract tests | IN PROGRESS |
 | S3 | Frontier | telemetry adapter + fixture/replay + validation | PLANNED |
-| **MV0** | First Verifiable Optimization | Frontier → canonical → replay → baseline → counterfactual → optimization → verification/evidence | **PLANNED** |
+| **MV0** | First Verifiable Optimization + thermal risk | Frontier → canonical → replay → baseline → counterfactual → risk → optimization → verification/evidence | **PLANNED** |
 | **MV1** | 800 VDC + liquid cooling co-optimization | coupled power/thermal topology → replay → counterfactual → deterministic optimization → evidence | **PLANNED** |
 | S4 | NLR/DOE | PUE/power/weather adapter + validation | PLANNED |
 | S5 | CSV/Parquet | deterministic batch ingestion + normalization | PLANNED |
@@ -44,6 +44,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Lineage contract.
 - Evidence Contract boundary for future optimization results.
 - Keep electrical and thermal telemetry addressable by common asset/time/lineage identifiers.
+- Keep recommended, allowable, facility, OEM and optimizer setpoint semantics distinct.
 
 ## S2 — Connector SDK
 
@@ -65,6 +66,8 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Execute the complete vertical slice using Frontier telemetry.
 - Produce deterministic replay manifest.
 - Calculate a versioned baseline and counterfactual.
+- Calculate thermal/capacity/SLA risk from current state and forecast where data supports it.
+- Evaluate candidate dynamic setpoints rather than treating a fixed temperature as universally optimal.
 - Run at least one deterministic non-RL optimization method.
 - Evaluate safety/policy constraints before recommendation.
 - Produce POTENTIAL/PREDICTED/EXECUTED/VERIFIED evidence without conflating states.
@@ -74,6 +77,8 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 Supporting contracts:
 
 - `docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md`
+- `docs/THERMAL_OPTIMIZATION.md`
+- `docs/THERMAL_PATTERNS_ASHRAE.md`
 - `docs/EVIDENCE_CONTRACT.md`
 - `docs/REPLAY.md`
 
@@ -89,7 +94,7 @@ Supporting contracts:
 - Compare at least two complete power/thermal topologies under identical workload/environment inputs.
 - Benchmark conversion loss, cooling energy, water, thermal headroom, electrical risk, SLA risk and useful compute per facility kWh.
 - Extend Evidence with topology, power-regime and thermal-regime provenance.
-- Keep all electrical protection, grounding, thermal interlock and leak/flow constraints behind the safety/policy boundary.
+- Keep electrical protection, grounding, thermal interlock and leak/flow constraints behind the safety/policy boundary.
 
 Supporting contract:
 
@@ -119,12 +124,14 @@ Supporting contract:
 - Rule/PID benchmark.
 - Thermal/energy sanity constraints.
 - Power-thermal topology scenarios required by MV1.
+- Historical cooling benchmark scenarios for Prineville, Google/DeepMind, Google London and Oracle context.
 
 ## S8 — Optimization
 
 - Formal objective: energy cost + carbon + water + thermal risk + electrical risk + SLA risk + wear.
 - Constraint registry.
 - Rule, PID, MPC and MILP baselines.
+- Dynamic setpoint candidate evaluation.
 - Safety validator before recommendation/control.
 - Power-thermal co-optimization benchmark before RL.
 
@@ -164,15 +171,18 @@ Supporting contract:
 | `docs/EVIDENCE_CONTRACT.md` | Reproducible optimization evidence | MV0/S10 |
 | `docs/REPLAY.md` | Deterministic data reproduction | S3/MV0/S7/S9 |
 | `docs/POWER_THERMAL_800VDC.md` | 800 VDC + liquid cooling power-thermal boundary | MV1 |
+| `docs/THERMAL_OPTIMIZATION.md` | Thermal state, risk, TTU and dynamic setpoint optimization | MV0/S8 |
+| `docs/THERMAL_PATTERNS_ASHRAE.md` | ASHRAE envelope and thermal-pattern semantics | MV0/S1 |
+| `docs/HISTORICAL_COOLING_CASES.md` | Historical cooling/resilience benchmark context | MV0/S7 |
 | `docs/AUDIT_REVALIDATION.md` | Snapshot finding lifecycle | Every external audit |
 | `docs/OTTO_BRAND_SYSTEM.md` | Technical brand/operational states | Product/dev UX |
 
 ## Explicit non-goals
 
-- No dashboard-first development.
+- No universal fixed setpoint.
 - No vendor lock-in in the domain layer.
 - No direct AI-to-actuator path.
-- No unverified savings marketed as realized savings.
+- No unverified savings marketed as realized.
 - No claim of Uptime Institute certification.
 - No RL implementation before validated data/replay/non-RL baselines.
 - No assumption that 800 VDC is universally optimal; it must be demonstrated by scenario evidence.

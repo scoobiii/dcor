@@ -4,15 +4,13 @@
 
 **English | [Português](docs/project/README.pt-br.md) | [Español](docs/project/README.es.md) | [Français](docs/project/README.fr.md) | [日本語](docs/project/README.ja.md) | [简体中文](docs/project/README.zh.md) | [한국어](docs/project/README.ko.md) | [Tiếng Việt](docs/project/README.vi.md) | [Bahasa Indonesia](docs/project/README.id.md) | [Italiano](docs/project/README.it.md)**
 
-> **English is the canonical technical README. Translations are maintained as localized snapshots and may lag the canonical document.**
+> **English is the canonical technical README. Localized snapshots are navigation aids and must not override the canonical contracts.**
 
 **Connect. Measure. Simulate. Optimize. Verify.**
 
-**Open, vendor-neutral, polyglot by boundary, and test-gated by contract.**
+DCOR is a vendor-neutral platform for data-center energy, cooling, water, cost, carbon, performance and operational-risk optimization.
 
-DCOR is a platform for data-center energy, cooling, cost, carbon and operational optimization. **DCOR is the product/platform name; connectors, services and optimization engines are independently evolvable components.**
-
-> **SCADA shows. DCIM organizes. BMS controls. DCOR explains, simulates, optimizes and verifies.**
+> **SCADA shows. BMS controls. DCIM organizes. DCOR explains, simulates, optimizes and verifies.**
 
 ## Project identity
 
@@ -20,93 +18,134 @@ DCOR is a platform for data-center energy, cooling, cost, carbon and operational
 
 ![Otto — DCOR mascot](assets/dcor-mascot.svg)
 
-**Otto is an otter because the animal maps naturally to DCOR's engineering problem:** intelligent use of water, agility in complex environments, interaction with infrastructure, and efficient adaptation. The mascot is deliberately technical rather than childish: Otto represents **efficiency, observability, cooling, resilience and controlled optimization**.
+**Otto is an otter because the animal maps naturally to DCOR's engineering problem:** intelligent use of water, agility in complex environments, interaction with infrastructure, and efficient adaptation. The mascot represents efficiency, observability, cooling, resilience and controlled optimization.
 
-The brand rule is simple: **Otto observes before acting, optimizes within constraints, and verifies the result.** The engineering brand system is documented in [docs/OTTO_BRAND_SYSTEM.md](docs/OTTO_BRAND_SYSTEM.md).
+The brand rule is simple: **Otto observes before acting, optimizes within constraints, and verifies the result.** See [docs/OTTO_BRAND_SYSTEM.md](docs/OTTO_BRAND_SYSTEM.md).
 
 ## Product boundary
 
-DCOR does not replace SCADA, BMS, DCIM or EPMS. It consumes their telemetry through connectors, converts heterogeneous data into a canonical contract, builds a digital-twin/counterfactual view, evaluates baselines, optimizes within safety and operational policies, and verifies realized savings.
+DCOR does not replace SCADA, BMS, DCIM or EPMS. It consumes telemetry through connectors, converts heterogeneous data into a canonical contract, builds a digital-twin/counterfactual view, evaluates baselines, optimizes within safety and operational policies, and verifies realized savings.
 
-The optimization layer is deliberately downstream of the data contract. **The dashboard is not the starting point.** UI components consume canonical data and must not encode vendor-specific telemetry assumptions.
+The dashboard is downstream of the canonical data model. UI components must not encode vendor-specific telemetry assumptions.
 
-## Architecture
+## Core thesis
 
-```mermaid
-flowchart LR
-  S[SCADA / BMS / DCIM / EPMS / Sensors] --> C[DCOR Connect]
-  C --> N[Canonical Data Model]
-  N --> Q[Data Quality + Lineage]
-  Q --> O[DCOR Observe]
-  Q --> T[DCOR Twin]
-  T --> A[DCOR Analytics]
-  A --> B[Baseline / Counterfactual]
-  B --> Z[DCOR Optimize]
-  Z --> V[Safety / Policy Validator]
-  V --> R[Recommendation / Control]
-  R --> X[DCOR Verify]
-  X --> D[API / Dashboard / Fleet]
+DCOR does not search for a universal temperature setpoint. It determines the **best safe operating point for the current state**.
+
+> **What setpoint and control action maximize useful IT work per resource while preserving thermal, equipment, SLA and resilience margins?**
+
+The optimizer considers temperature, humidity, dew point, IT load, equipment density, cooling capacity, weather, workload, tariff, carbon, water, equipment wear and policy constraints.
+
+## Thermal operating envelope
+
+ASHRAE guidance is an **envelope/reference**, not a universal DCOR setpoint. For high-density air-cooled equipment, the 2021 ASHRAE H1 reference uses a narrower recommended range of **18–22 °C** and an allowable dry-bulb range of **5–25 °C**. The applicable OEM, commissioning and facility policies may be stricter.
+
+DCOR therefore distinguishes:
+
+```text
+STANDARD / OEM ENVELOPE != FACILITY SETPOINT != OPTIMIZER CANDIDATE != ECONOMIC OPTIMUM
 ```
+
+Temperature is not evaluated alone. Humidity, dew point, surface temperature, rate of change, load and cooling capacity are part of the thermal state.
+
+See [docs/THERMAL_PATTERNS_ASHRAE.md](docs/THERMAL_PATTERNS_ASHRAE.md).
+
+## Thermal risk
+
+Thermal risk is modeled as a **forecasted probability of entering an unsafe state**, not simply `temperature > limit`.
+
+Key indicators:
+
+- `ThermalMargin = T_limit - T_predicted`
+- `DewPointMargin = T_surface - T_dewpoint`
+- `CoolingCapacityMargin = Capacity_available - ThermalLoad`
+- `SLA_Risk = P(SLA violation)`
+- `TTU = min time until safe-set violation`
+
+The state machine is:
+
+```text
+SAFE → WATCH → MARGINAL → CRITICAL → UNSAFE
+```
+
+The optimizer uses trajectory and forecast horizon to identify unsafe transitions before the boundary is crossed.
+
+## Optimization objective
+
+```text
+maximize Useful_IT_Work(T, u) / ResourceCost(T, u)
+```
+
+Resource cost includes energy, water, carbon, monetary cost and risk penalties, subject to:
+
+```text
+T_server <= T_limit
+T_surface >= T_dewpoint + Δsafe
+CoolingLoad <= CoolingCapacity
+SLA_risk <= SLA_max
+ThermalRisk <= Risk_max
+Performance >= Performance_baseline
+EquipmentPolicy == valid
+```
+
+**PUE remains an important KPI, but useful work per resource is the product-level objective.**
+
+## Historical cooling benchmarks
+
+DCOR uses historical public cases as **benchmarks and failure-mode references**, not as current operational measurements.
+
+- **Google / DeepMind:** ML-based cooling optimization and the later safety-first control architecture motivate `observe → predict → constrain → act → verify`.
+- **Prineville:** efficiency plus psychrometric/control-excursion risk; benchmark path is weather → controls → humidity/dew point → equipment exposure → incident → corrective action.
+- **Google London 2022:** extreme-weather and correlated cooling-failure resilience scenario.
+- **Oracle:** historical cooling/efficiency context where source data is available.
+
+Historical PUE/WUE values retain their source date. Missing current values remain `unknown`; they are never promoted to verified current KPIs.
+
+See [docs/HISTORICAL_COOLING_CASES.md](docs/HISTORICAL_COOLING_CASES.md) and [docs/BENCHMARK.md](docs/BENCHMARK.md).
 
 ## Product proof path — MV0
 
-The first product-value milestone is **MV0 — First Verifiable Optimization**. It is deliberately placed before advanced RL/control/SaaS so the project proves measurable value with a reproducible vertical slice.
-
 ```text
-Frontier
-   ↓
+Source
+ ↓
 Canonical
-   ↓
+ ↓
 Quality + Lineage
-   ↓
+ ↓
 Replay
-   ↓
+ ↓
 Baseline
-   ↓
+ ↓
 Counterfactual
-   ↓
+ ↓
+Thermal / Performance Risk
+ ↓
 Optimization
-   ↓
+ ↓
 Safety / Policy
-   ↓
+ ↓
 Verification
-   ↓
+ ↓
 Evidence
 ```
 
-The contracts are defined in:
+Contracts:
 
 - [MV0 — First Verifiable Optimization](docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md)
-- [DCOR Evidence Contract](docs/EVIDENCE_CONTRACT.md)
-- [DCOR Replay](docs/REPLAY.md)
-- [DCOR Benchmark](docs/BENCHMARK.md)
+- [Thermal Optimization](docs/THERMAL_OPTIMIZATION.md)
+- [ASHRAE Thermal Patterns](docs/THERMAL_PATTERNS_ASHRAE.md)
+- [Historical Cooling Cases](docs/HISTORICAL_COOLING_CASES.md)
+- [Evidence Contract](docs/EVIDENCE_CONTRACT.md)
+- [Replay](docs/REPLAY.md)
+- [Benchmark](docs/BENCHMARK.md)
 
-**Important:** illustrative values are not product results. DCOR must distinguish `POTENTIAL`, `PREDICTED`, `EXECUTED` and `VERIFIED` states, and only verified results may be presented as realized savings.
+Illustrative values are not product results. DCOR distinguishes `POTENTIAL`, `PREDICTED`, `EXECUTED` and `VERIFIED`; only verified results may be presented as realized savings.
 
 ## MV1 — 800 VDC + liquid cooling
 
 The next product-value frontier is **MV1 — Power-Thermal Co-Optimization for high-density AI infrastructure**.
 
-The industry is moving toward 800 VDC for next-generation AI data-center power distribution while high-density compute is simultaneously driving direct-to-chip liquid cooling. OCP reports active work by Google, Microsoft and NVIDIA toward common 800 VDC requirements; NVIDIA describes the architecture as reducing conversion stages and distribution losses. DCOR uses this as an open, vendor-neutral optimization regime rather than a vendor implementation. citeturn0search1turn0search0
-
-```text
-                 AI FACTORY
-                     │
-             ┌───────┴────────┐
-             │                │
-          800 VDC         LIQUID COOLING
-             │                │
-       Power distribution   Direct-to-chip
-             │                │
-             └───────┬────────┘
-                     │
-              POWER + THERMAL
-               CO-OPTIMIZATION
-                     │
-                  DCOR
-```
-
-Reference high-density topology:
+DCOR models 800 VDC distribution and direct-to-chip liquid cooling as an open, vendor-neutral optimization regime. Legacy AC/air/evaporative regimes remain representable for compatibility and historical benchmarking.
 
 ```text
 MV / Grid
@@ -128,92 +167,49 @@ Facility cooling loop
 Dry cooler / Chiller / Optional evaporative assist
 ```
 
-**Design rule:** internal evaporative air cooling is not the primary thermal path in the high-density AI reference architecture. Legacy air/evaporative regimes remain representable for compatibility and historical benchmarking. External evaporative assistance may be evaluated as a heat-rejection option when climate, water, cost and reliability make it beneficial.
+The objective is coupled electrical + thermal optimization under workload, weather, cost, carbon, water, reliability, SLA and safety constraints. See [docs/POWER_THERMAL_800VDC.md](docs/POWER_THERMAL_800VDC.md).
 
-The full boundary, regimes, telemetry, agent topology, counterfactual scenarios, evidence and safety rules are defined in [MV1 — 800 VDC + Liquid Cooling Power-Thermal Architecture](docs/POWER_THERMAL_800VDC.md).
+## Architecture
 
-The key optimization question becomes:
+```mermaid
+flowchart LR
+  S[SCADA / BMS / DCIM / EPMS / Sensors] --> C[Connectors]
+  C --> N[Canonical Model]
+  N --> Q[Quality + Lineage]
+  Q --> T[Digital Twin / Replay]
+  Q --> A[Analytics]
+  T --> B[Baseline / Counterfactual]
+  A --> O[Risk + Optimization]
+  B --> O
+  O --> P[Safety / Policy]
+  P --> R[Recommendation / Control]
+  R --> V[Verification]
+  V --> E[Evidence]
+  E --> API[API / Dashboard / Fleet]
+```
 
-> **Given workload, rack density, power topology, liquid-cooling topology, weather and operational constraints, which combined electrical + thermal configuration minimizes facility energy/cost/carbon/water/risk while maintaining SLA and safety?**
-
-PUE remains useful but is not sufficient as the sole KPI. MV1 therefore evaluates conversion loss, cooling energy, water, thermal headroom, electrical risk, SLA risk and useful compute per facility kWh.
-
-## Use cases and connector prioritization
-
-The product scope is anchored in concrete use cases rather than an unbounded adapter catalog. See [docs/USE_CASES.md](docs/USE_CASES.md) for PUE, cooling, water, cost, carbon, workload-aware optimization, anomaly detection, baseline verification, data quality and multi-site cases.
-
-Connector work is prioritized with a documented ROI model in [docs/CONNECTOR_ROI.md](docs/CONNECTOR_ROI.md). Technical feasibility alone is not sufficient reason to add an adapter.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the normative architecture and safety boundary.
 
 ## Polyglot engineering strategy
 
-DCOR adopts the useful idea demonstrated by [PicoClaw](https://github.com/sipeed/picoclaw): **choose the language for the runtime boundary and deployment constraints, not for ideology**. PicoClaw uses a Go-native core and emphasizes portability, lightweight deployment and explicit architecture/documentation boundaries.
+DCOR uses a contract-first polyglot strategy: Python for canonical/scientific work and API by default; Go/Rust where edge footprint, deterministic performance or protocol requirements justify them; TypeScript for UI; C/C++ or Rust for firmware/device boundaries.
 
-DCOR will therefore avoid a monolithic language mandate while keeping the canonical contracts language-neutral.
+The rule is **not** to rewrite working Python merely to increase language count. Introduce another language only when it provides measurable value in memory footprint, startup time, deterministic execution, protocol availability, edge deployment, throughput/latency, safety/isolation or interoperability.
 
-| Layer / workload | Preferred | Allowed alternatives | Rule |
-|---|---|---|---|
-| Canonical model / domain core | **Python** | Go, Rust | Keep contracts stable and language-neutral |
-| Data connectors | **Python** | Go, Rust | Select by protocol, latency and deployment target |
-| Edge / agent / low-memory runtime | **Go** | Rust, Python | Prefer static binaries and low operational overhead |
-| High-performance protocol / device adapter | **Rust** | Go, C/C++ | Use only where profiling justifies it |
-| Industrial / legacy device integration | **C/C++** | Rust, Python | Isolate behind Connector SDK boundary |
-| Scientific modeling / research | **Python** | Julia | Reproducible experiments; production path exposes a stable contract |
-| Optimization / ML | **Python** | Julia, Rust/C++ kernels | Keep models behind optimizer interfaces |
-| API | **Python** | Go, Rust | Contract-first HTTP API |
-| Web UI / dashboards | **TypeScript** | JavaScript | Consume canonical/API contracts only |
-| Firmware / microcontrollers | **C/C++ / Rust** | — | Outside the core platform boundary |
-
-### Language-selection rule
-
-**Do not rewrite working Python into Go/Rust merely to increase language count.** Introduce another language only when it provides a measurable advantage in one or more of:
-
-- memory footprint;
-- startup time;
-- deterministic execution;
-- protocol/library availability;
-- edge deployment;
-- throughput/latency;
-- safety or isolation;
-- interoperability with existing infrastructure.
-
-Every polyglot component must expose a stable DCOR contract and have contract/integration tests. The canonical telemetry model remains the interoperability boundary.
+Every polyglot component exposes a stable DCOR contract and has contract/integration tests. The canonical telemetry model remains the interoperability boundary.
 
 ## Local development — one gate
-
-The project intentionally keeps the initial dependency footprint small. A developer should not need a different recipe for every environment.
 
 ```sh
 git clone https://github.com/scoobiii/dcor.git
 cd dcor
-
 ./scripts/bootstrap.sh
 ./scripts/test.sh
 ```
 
-Expected gate:
-
-```text
-DCOR local validation
-=====================
-
-Python ............... 3.x
-Dependencies ......... OK
-Canonical model ...... PASS
-Connector SDK ........ PASS
-Architecture ......... PASS
-Tests ................ PASS
-Coverage ............. PASS
-
-DCOR LOCAL GATE: PASS
-```
-
-On a successful gate, the validator also emits the compact `OTTO / VERIFIED` marker. The status art is informational; the gate remains machine-readable and is not dependent on terminal rendering.
-
-The same gate is used by CI. Current compatibility targets are documented in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md); development instructions are in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+The machine gate, not LOC, determines delivery status.
 
 ## Delivery monitor
-
-This table is the **living delivery contract**. Status changes only when the corresponding implementation, tests, CI validation and evidence exist. Detailed file-level tracking lives in [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md).
 
 | Milestone | Scope | Status | Exit evidence |
 |---|---|---|---|
@@ -221,10 +217,10 @@ This table is the **living delivery contract**. Status changes only when the cor
 | S1 | Clean Architecture + canonical contracts | **IN PROGRESS** | architecture + schema tests |
 | S2 | Universal Connector SDK | **IN PROGRESS** | SDK + contract tests |
 | S3 | Frontier connector | **PLANNED** | adapter + fixture + validation |
-| **MV0** | First Verifiable Optimization | **PLANNED** | baseline + counterfactual + verification/evidence |
+| **MV0** | First Verifiable Optimization + thermal risk | **PLANNED** | baseline + counterfactual + risk + verification/evidence |
 | **MV1** | 800 VDC + liquid cooling co-optimization | **PLANNED** | coupled topology + counterfactual + deterministic optimization + evidence |
 | S4 | NLR/DOE connector | **PLANNED** | adapter + fixture + validation |
-| S5 | CSV/Parquet connector | **PLANNED** | ingestion + normalization tests |
+| S5 | CSV/Parquet connectors | **PLANNED** | ingestion + normalization tests |
 | S6 | MQTT + REST connectors | **PLANNED** | protocol contract tests |
 | S7 | Digital Twin + baseline | **PLANNED** | replay/counterfactual benchmark |
 | S8 | Optimization engines | **PLANNED** | Rule/PID/MPC/MILP benchmarks |
@@ -232,21 +228,13 @@ This table is the **living delivery contract**. Status changes only when the cor
 | S10 | Savings verification + safety/control | **PLANNED** | verified savings + policy gates |
 | S11 | SaaS, fleet, observability, production hardening | **PLANNED** | release gate + production checklist |
 
-### Progress rule
-
-`PLANNED → IN PROGRESS → CI VALIDATED → DONE`.
-
-A sprint cannot become `DONE` merely because code was committed. The required files must exist, tests must pass, package coverage must meet **100%**, and the CI gate must validate the commit. LOC is monitored as engineering telemetry, **not as a quality or completion criterion**.
+Status changes only when implementation, tests, CI validation and evidence exist. See [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md).
 
 ## Engineering evidence
 
-The project now treats the following as first-class delivery artifacts:
+First-class delivery artifacts include replay, machine-readable evidence, common benchmarks, the MV1 power-thermal model and external-audit revalidation.
 
-- **Replay** — deterministic recorded telemetry for regression, incident reproduction and algorithm comparison.
-- **Evidence** — machine-readable provenance for optimization predictions and verified savings.
-- **Benchmark** — common metrics for ingestion, normalization, quality, replay, baseline, optimization, safety, verification and performance.
-- **Power-thermal model** — coupled electrical/thermal scenarios for MV1.
-- **Audit revalidation** — external findings are snapshots and are reclassified as `OPEN`, `FIXED` or `SUPERSEDED` against current `HEAD`.
+See [docs/SWOT.md](docs/SWOT.md) for the evidence-oriented product/engineering assessment and 1–2–3 maturity scale.
 
 ## Connector roadmap
 
@@ -259,15 +247,15 @@ The project now treats the following as first-class delivery artifacts:
 
 ## Research and optimization
 
-Optimization will be benchmarked in this order:
+Optimization is benchmarked in this order:
 
-**baseline → rules → PID/MPC/MILP → power-thermal co-optimization → DQN → Double/Dueling DQN → PPO/SAC**, with workload, electrical, thermal, equipment, SLA, cost, carbon and water constraints represented explicitly.
+**baseline → rules → PID/MPC/MILP → power-thermal co-optimization → DQN → Double/Dueling DQN → PPO/SAC**.
 
-RL is not a substitute for validated data, replay, baselines or safety gates. Advanced RL work follows the first verifiable product paths.
+RL is not a substitute for validated data, replay, baselines or safety gates. Advanced RL follows the first verifiable product paths.
 
 ## Standards and governance
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md), [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md), [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md), [docs/POWER_THERMAL_800VDC.md](docs/POWER_THERMAL_800VDC.md), and [docs/AUDIT_REVALIDATION.md](docs/AUDIT_REVALIDATION.md).
+See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md), [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md), [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md), [docs/POWER_THERMAL_800VDC.md](docs/POWER_THERMAL_800VDC.md), [docs/SWOT.md](docs/SWOT.md), and [docs/AUDIT_REVALIDATION.md](docs/AUDIT_REVALIDATION.md).
 
 ## Repository layout
 
@@ -288,6 +276,17 @@ assets/               brand assets, including the DCOR mascot
 .github/workflows/    CI gates
 ```
 
+## Non-goals
+
+- no universal fixed setpoint;
+- no direct AI-to-actuator path;
+- no verified-savings claim without measured evidence;
+- no Uptime Institute certification claim;
+- no RL before validated data, replay and non-RL baselines;
+- no vendor-specific assumptions in the canonical domain model;
+- no assumption that 800 VDC is universally optimal;
+- no assumption that all data centers require liquid cooling.
+
 ## Status
 
-**Current gate: S0/S1/S2 foundation in progress.** The repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.** S3, MV0 and MV1 remain planned until their implementation and CI evidence exist.
+**Current gate: S0/S1/S2 foundation in progress.** S3, MV0 and MV1 remain planned until their implementation and CI evidence exist.

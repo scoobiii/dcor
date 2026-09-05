@@ -1,61 +1,79 @@
 # DCOR Canonical Data Model
 
+The canonical model is the interoperability boundary between connectors and domain services.
+
 ## Measurement envelope
 
-A canonical measurement is source-neutral and carries enough context to be safely aggregated, validated and traced.
+Every measurement must preserve:
 
-```json
-{
-  "tenant_id": "tenant-001",
-  "facility_id": "dc-001",
-  "asset_id": "rack-042",
-  "timestamp": "2026-09-04T15:00:00Z",
-  "metric": "it_power_kw",
-  "value": 842.3,
-  "unit": "kW",
-  "quality": "GOOD",
-  "confidence": 1.0,
-  "source": "frontier",
-  "lineage": {
-    "connector": "frontier",
-    "source_record_id": "r-001",
-    "schema_version": "1"
-  }
-}
+- `tenant_id` / facility / asset identity;
+- metric name and value;
+- unit and timestamp/timezone;
+- quality state;
+- confidence/uncertainty where available;
+- source connector and source identifier;
+- schema/version lineage.
+
+## Thermal domain vocabulary
+
+Where supported, canonical telemetry may include:
+
+```text
+ambient_temperature
+supply_temperature
+return_temperature
+inlet_temperature
+surface_temperature
+relative_humidity
+wet_bulb_temperature
+dew_point_temperature
+it_thermal_load
+rack_density
+cooling_capacity
+cooling_power
+fan_power
+pump_power
+compressor_power
+setpoint
+workload
+performance
+sla_state
+redundancy_state
 ```
 
-## Required fields
+## Derived indicators
 
-| Field | Type | Rule |
-|---|---|---|
-| `tenant_id` | string | required for SaaS persistence; optional for isolated lab mode |
-| `facility_id` | string | stable facility identifier |
-| `asset_id` | string/null | physical/logical asset when known |
-| `timestamp` | RFC3339 UTC | source time normalized to UTC |
-| `metric` | string | canonical metric name |
-| `value` | number | finite numeric value |
-| `unit` | string | canonical unit |
-| `quality` | enum | GOOD, SUSPECT, BAD, MISSING, STALE, DUPLICATE |
-| `confidence` | 0..1 | ingestion confidence |
-| `source` | string | connector/source identity |
-| `lineage` | object | source traceability |
+Derived values must identify their inputs and calculation version.
 
-## Initial canonical metrics
+- `ThermalMargin = T_limit - T_predicted`
+- `DewPointMargin = T_surface - T_dewpoint`
+- `CoolingCapacityMargin = Capacity_available - ThermalLoad`
+- `TTU = TimeToUnsafeState`
+- `PUE = FacilityPower / ITPower` when boundaries are valid
+- `WUE = WaterConsumption / ITEnergy` when boundaries are valid
 
-`it_power_kw`, `cooling_power_kw`, `total_power_kw`, `pue`, `ambient_temp_c`, `humidity_pct`, `supply_water_c`, `return_water_c`, `coolant_flow_lpm`, `cpu_utilization_pct`, `gpu_utilization_pct`.
+## Setpoint semantics
 
-Additional metrics are added through versioned schema changes, not ad-hoc connector fields.
+Do not overload `setpoint` to mean a standard recommendation. Store policy/reference ranges separately from the active facility setpoint and optimizer candidates.
 
-## Quality rules
+```text
+reference_range
+allowable_range
+facility_limit
+OEM_limit
+commissioning_limit
+current_setpoint
+candidate_setpoint
+```
 
-- timestamps are normalized to UTC while preserving original source timestamp in lineage when available;
-- duplicates are detected by source identity plus timestamp/metric/asset semantics;
-- impossible values become `BAD`, not silently clipped;
-- stale values remain distinguishable from fresh values;
-- unit conversion is explicit and tested;
-- interpolation is a policy decision and cannot erase the original quality state;
-- confidence is not a substitute for quality.
+## Quality states
 
-## Evolution
+At minimum:
 
-The model is versioned. Backward-compatible additions may remain in the same major version. Semantic changes require a new version and migration/test evidence.
+`VALID | MISSING | STALE | DUPLICATE | INVALID | ESTIMATED | SIMULATED | UNKNOWN`
+
+A derived metric built from invalid inputs cannot become a trusted measurement merely because its arithmetic succeeds.
+
+## Contract rule
+
+Connectors normalize source semantics into this vocabulary. Optimizers, analytics and UI must consume canonical fields rather than source-specific names.
