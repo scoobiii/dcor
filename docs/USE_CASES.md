@@ -1,187 +1,85 @@
 # DCOR Use Cases
 
-This catalog keeps the product boundary concrete. A use case is not complete until its input, constraints, algorithm and verification path are explicit.
+A use case is implementation-ready only when input data, constraints, objective, action space and verification path are explicit.
 
 ## UC01 — PUE optimization
+Reduce facility overhead relative to IT load without violating thermal or operational constraints.
 
-**Problem:** reduce facility overhead relative to IT load without violating thermal or operational constraints.
+**Inputs:** IT/facility/cooling power and environmental telemetry.
 
-**Input:** IT power, cooling/HVAC/pump power, facility power and relevant environmental telemetry.
+**Output:** candidate operating point and predicted PUE/energy delta.
 
-**Canonical metrics:** `it_power_kw`, `cooling_power_kw`, `facility_power_kw`, `pue`.
-
-**Constraint:** thermal limits, equipment capacity, operational policy and SLA.
-
-**Algorithm:** baseline → rules/PID/MPC/MILP → advanced optimization when justified.
-
-**Output:** candidate operating point and predicted energy/PUE delta.
-
-**Verification:** normalized baseline versus actual energy/PUE.
-
-**Business KPI:** energy cost and PUE reduction.
+**Verification:** normalized measured energy against a versioned baseline.
 
 ## UC02 — Cooling optimization
+Minimize cooling energy while maintaining the applicable thermal envelope, equipment limits and SLA.
 
-**Problem:** minimize cooling energy while maintaining acceptable thermal conditions.
+**Inputs:** temperatures, humidity, dew point, cooling power/capacity, airflow/flow, IT load and weather.
 
-**Input:** temperatures, humidity, cooling power, airflow/flow where available, IT load and ambient conditions.
-
-**Canonical metrics:** thermal and cooling power series plus quality/confidence.
-
-**Constraint:** thermal envelope, equipment limits and control policy.
-
-**Algorithm:** rules/PID/MPC; RL only after validated replay/twin baselines.
-
-**Output:** recommendation with constraint evidence.
-
-**Verification:** actual cooling energy and thermal impact.
-
-**Business KPI:** cooling kWh, thermal excursions and operating cost.
+**Output:** constrained cooling action and predicted consequences.
 
 ## UC03 — Water optimization
+Reduce cooling-water consumption without creating thermal or equipment risk.
 
-**Problem:** reduce water consumption associated with cooling operations.
+**Inputs:** metered water, cooling state, weather and workload.
 
-**Input:** water flow/consumption, cooling state, weather and workload.
+**Output:** constrained water-saving action and verified WUE delta.
 
-**Canonical metrics:** water volume/flow, temperature, cooling power and workload proxies.
-
-**Constraint:** thermal limits, equipment and water-system operating limits.
-
-**Algorithm:** baseline and constrained optimization.
-
-**Output:** predicted water delta and safe candidate action.
-
-**Verification:** normalized water consumption and thermal impact.
-
-**Business KPI:** WUE and water volume/cost.
-
-## UC04 — Energy cost optimization
-
-**Problem:** reduce electricity cost under time-varying tariffs without violating operational constraints.
-
-**Input:** power/load series, tariff schedule, workload and operating constraints.
-
-**Canonical metrics:** kW/kWh, tariff and workload features.
-
-**Constraint:** SLA, capacity, thermal and policy limits.
-
-**Algorithm:** constrained scheduling/optimization.
-
-**Output:** predicted cost delta and recommendation.
-
-**Verification:** normalized actual cost versus baseline.
-
-**Business KPI:** currency saved per interval/month.
+## UC04 — Energy-cost optimization
+Minimize electricity cost under time-varying tariffs while maintaining SLA, capacity and thermal constraints.
 
 ## UC05 — Carbon optimization
-
-**Problem:** reduce carbon intensity associated with electricity consumption.
-
-**Input:** energy consumption, grid carbon-intensity signal and workload.
-
-**Canonical metrics:** kWh, carbon intensity and workload.
-
-**Constraint:** SLA, capacity and operational policies.
-
-**Algorithm:** constrained workload/energy scheduling where applicable.
-
-**Output:** predicted carbon delta.
-
-**Verification:** actual normalized energy × declared carbon-intensity methodology.
-
-**Business KPI:** kgCO2e avoided.
+Minimize carbon impact using declared emissions factors and workload-aware scheduling where applicable.
 
 ## UC06 — Workload-aware optimization
+Optimize infrastructure against useful workload rather than facility efficiency alone.
 
-**Problem:** avoid optimizing infrastructure against an incomplete view of IT demand.
-
-**Input:** workload/compute telemetry plus facility telemetry.
-
-**Canonical metrics:** workload, IT power, thermal and facility power.
-
-**Constraint:** workload SLA and infrastructure capacity.
-
-**Algorithm:** workload-aware baseline and constrained optimizer.
-
-**Output:** infrastructure action tied to workload state.
-
-**Verification:** energy/cost delta with workload normalization.
-
-**Business KPI:** energy per unit of useful workload.
+**Primary KPI:** useful work per resource consumed.
 
 ## UC07 — Anomaly detection
-
-**Problem:** detect telemetry or operational behavior that invalidates optimization assumptions.
-
-**Input:** canonical time series and quality metadata.
-
-**Canonical metrics:** all relevant measurements plus quality/confidence.
-
-**Constraint:** false-positive/false-negative policy and operational severity.
-
-**Algorithm:** statistical/rule/model-based detection.
-
-**Output:** anomaly with evidence and lineage.
-
-**Verification:** replay/regression evaluation.
-
-**Business KPI:** invalid data prevented from influencing decisions.
+Detect telemetry and operational behavior that invalidates optimization assumptions.
 
 ## UC08 — Baseline verification
+Determine whether an observed result is better than a defensible, normalized baseline.
 
-**Problem:** determine whether an observed result is better than a defensible baseline.
-
-**Input:** historical/reference telemetry, workload, weather and tariff context.
-
-**Canonical metrics:** energy, workload, weather and relevant operating state.
-
-**Constraint:** comparable operating conditions.
-
-**Algorithm:** versioned baseline + normalization.
-
-**Output:** baseline, normalized actual and delta.
-
-**Verification:** Evidence Contract.
-
-**Business KPI:** verified savings rather than predicted savings.
-
-## UC09 — Data quality monitoring
-
-**Problem:** prevent missing, stale, duplicate, impossible or low-confidence telemetry from contaminating downstream optimization.
-
-**Input:** all connector outputs.
-
-**Canonical metrics:** quality, confidence, timestamp and lineage fields.
-
-**Constraint:** source-specific quality policy.
-
-**Algorithm:** deterministic validation and quality classification.
-
-**Output:** quality report and rejected/quarantined records.
-
-**Verification:** contract and regression tests.
-
-**Business KPI:** valid-record rate and optimization decisions protected from bad data.
+## UC09 — Data-quality monitoring
+Prevent stale, missing, duplicated, impossible or low-confidence data from influencing optimization.
 
 ## UC10 — Multi-site optimization
+Optimize a fleet while preserving tenant, facility, equipment and policy boundaries.
 
-**Problem:** optimize a fleet while preserving tenant/site isolation and local operating constraints.
+## UC11 — Thermal-risk prediction
 
-**Input:** canonical telemetry from multiple facilities plus site-specific policy.
+**Problem:** detect movement toward an unsafe thermal state before a static limit is crossed.
 
-**Canonical metrics:** common DCOR metrics and site metadata.
+**Inputs:** temperature, humidity/dew point, surface temperature, IT load, cooling capacity, setpoint, redundancy state, weather forecast and workload/performance.
 
-**Constraint:** tenant, site, equipment, thermal, SLA and policy boundaries.
+**KPIs:**
 
-**Algorithm:** site-local optimization with fleet-level analytics where justified.
+- `ThermalMargin = T_limit - T_predicted`;
+- `DewPointMargin = T_surface - T_dewpoint`;
+- `CoolingCapacityMargin = Capacity_available - ThermalLoad`;
+- `TTU = TimeToUnsafeState`;
+- `SLA_Risk`.
 
-**Output:** site-level recommendations and fleet roll-up.
+**Output:** risk state `SAFE/WATCH/MARGINAL/CRITICAL/UNSAFE`, predicted transition time and evidence.
 
-**Verification:** evidence remains attributable to the site and tenant.
+## UC12 — Economic setpoint optimization
 
-**Business KPI:** aggregate verified energy/cost/carbon/water improvement.
+**Problem:** find the highest-value admissible thermal operating point rather than hardcoding 22 °C or 27 °C.
 
-## Product rule
+**Objective:**
 
-A use case should be promoted into implementation only when its data availability, business value, deployment reach and engineering effort justify the connector/algorithm investment. The use-case catalog is therefore an input to the Connector ROI Matrix and not a promise to implement every adapter.
+`maximize Useful_IT_Work / (Energy + Water + Carbon + Cost + Risk)`
+
+**Constraints:** applicable OEM/facility/commissioning policy, thermal margin, dew-point margin, cooling capacity, SLA risk, performance floor, ramp/change-rate and resilience state.
+
+**Method:** evaluate candidate setpoints/actions using a digital twin/counterfactual model; reject unsafe candidates; verify realized outcome against baseline.
+
+### Important rule
+
+A higher setpoint does not inherently increase server performance. It can improve net useful work by reducing cooling overhead or avoiding infrastructure bottlenecks, but can also increase IT fan power, component stress or throttling. DCOR measures the net effect.
+
+## Product use-case rule
+
+Use cases drive connector prioritization through the Connector ROI Matrix. A technically interesting adapter is not automatically a product priority.

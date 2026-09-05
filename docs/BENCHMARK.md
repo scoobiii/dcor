@@ -1,81 +1,77 @@
 # DCOR Benchmark
 
-The DCOR Benchmark provides a common evaluation surface for connectors, data quality, replay, baselines, optimization and safety. It is intended to prevent language choice or model novelty from becoming a substitute for measurable system performance.
+The benchmark evaluates ingestion, canonicalization, replay, baselines, thermal risk, optimization, safety and verification under a common contract.
 
-## Benchmark stages
+## Benchmark pipeline
 
 ```text
-ingestion
-   ↓
-normalization
-   ↓
-data quality
-   ↓
-replay
-   ↓
-baseline
-   ↓
-optimization
-   ↓
-safety
-   ↓
-verification
-   ↓
-performance
+ingestion → normalization → quality → replay
+→ baseline → counterfactual → risk → optimization
+→ safety → verification → performance
 ```
+
+## Benchmark 001 — Cooling Envelope & Failure Resilience
+
+### Objective
+
+Determine whether DCOR can identify a safe and economically superior operating point while detecting approach to thermal/psychrometric failure.
+
+### Scenarios
+
+1. **Prineville control excursion:** outside-air/damper error + evaporative cooling + humidity/condensation.
+2. **Google/DeepMind optimization:** predictive cooling optimization under constraints.
+3. **Google London:** extreme outdoor heat + correlated cooling failures.
+4. **High-density H1:** candidate setpoints constrained by the applicable H1 envelope.
+
+### Candidate setpoint experiment
+
+A facility may start from a 22 °C baseline and test candidate values upward/downward **only within the applicable policy envelope**. For H1, the 2021 ASHRAE reference is 18–22 °C recommended and 15–25 °C allowable. A 26–27 °C candidate is therefore rejected when H1 is the governing policy. citeturn0search1turn0search19
 
 ## Metrics
 
-| Category | Primary KPI | Notes |
-|---|---|---|
-| Ingestion | records/s | State dataset and batch size |
-| Latency | p50 / p95 / p99 | Separate ingestion and end-to-end latency |
-| Memory | MB | Peak resident memory where measurable |
-| CPU | % / CPU-seconds | Record environment |
-| Normalization | records/s | Same canonical contract |
-| Quality | invalid % | Include reason categories |
-| Replay | deterministic match/tolerance | Fixed manifest + version |
-| Baseline | MAE / RMSE | Dataset-specific validity rules |
-| Optimization | energy/cost/carbon/water delta | Compare against declared baseline |
-| Safety | rejected actions | Count and reason |
-| Verification | confidence / verification rate | Prediction is not verification |
-| Reproducibility | replay success rate | Same manifest across runs |
+| Category | KPI |
+|---|---|
+| Energy | IT kWh, cooling kWh, facility kWh, PUE |
+| Water | water volume, WUE |
+| Carbon | kgCO2e with declared factor |
+| Performance | useful work, throughput, latency, throttling |
+| Thermal | inlet/return/supply T, ThermalMargin |
+| Psychrometric | RH, dew point, DewPointMargin |
+| Capacity | CoolingCapacityMargin |
+| Risk | thermal risk probability/state, TTU |
+| Resilience | available capacity, failed units, recovery time |
+| SLA | violation probability/actual violations |
+| Optimization | objective delta, rejected candidates |
+| Verification | baseline-normalized actual delta |
 
-## Required benchmark metadata
+## Required result record
 
-Every benchmark result must identify:
+Every result includes:
 
-- DCOR version/commit;
-- connector and schema version;
-- dataset/replay identifier and content hash;
-- hardware/runtime environment;
-- Python or other language/runtime version;
-- configuration;
-- seed when stochastic;
-- warm-up policy;
-- measurement interval;
-- numerical tolerance where applicable.
+- commit/version;
+- dataset/replay hash;
+- policy version;
+- equipment class;
+- baseline definition;
+- candidate action;
+- predicted energy/water/carbon/performance/risk;
+- constraints and rejection reasons;
+- actual measurements when executed;
+- verification state.
 
 ## Fair comparison
 
-Comparisons are valid only when inputs, canonical contract, measurement window and acceptance criteria are equivalent. A faster implementation that changes semantics is not a valid optimization.
+Same canonical semantics, time window, workload normalization, policy, acceptance criteria and hardware/runtime class are required for valid comparisons. Changing semantics to obtain a faster benchmark is not an optimization.
 
-Polyglot components must be benchmarked at the boundary they are intended to serve. The purpose is to establish a measurable reason for another language, not to maximize the language count.
+## Safety assertions
 
-## Optimization benchmark
-
-Optimization results must include at least:
-
-- baseline objective;
-- candidate objective;
-- constraint violations;
-- rejected candidates/actions;
-- predicted delta;
-- actual delta when verification data exists;
-- runtime and resource consumption.
-
-No benchmark result may label predicted savings as verified savings.
+- unsafe candidates must be rejected;
+- H1 26 °C must be rejected when H1 is active;
+- decreasing `DewPointMargin` must increase condensation exposure;
+- decreasing `CoolingCapacityMargin` must restrict feasible actions;
+- forecasted boundary crossing must be detected before the static limit;
+- predicted savings must never be labeled verified.
 
 ## Regression policy
 
-A benchmark becomes a regression gate only after its metric is stable enough to justify a threshold. Thresholds must be versioned with the benchmark and should distinguish deterministic failures from expected numerical variance.
+Stable benchmark thresholds become CI gates only after repeatability is demonstrated. Every threshold is versioned and tied to the benchmark definition.
