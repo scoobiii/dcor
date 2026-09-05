@@ -1,12 +1,14 @@
-# DCOR Backlog — S0 to S11 + MV0
+# DCOR Backlog — S0 to S11 + MV0 + MV1
 
 ## Delivery gate
 
 Every sprint has four gates: **implementation → tests → CI validation → evidence/documentation**. A sprint cannot be marked DONE without all four.
 
-## Product-value gate
+## Product-value gates
 
-**MV0 — First Verifiable Optimization** is a cross-cutting vertical slice between foundation/connectivity and advanced optimization. It does not replace S0–S11; it proves the product thesis before the project commits to RL, control or SaaS complexity.
+**MV0 — First Verifiable Optimization** proves the core telemetry-to-evidence vertical slice before advanced optimization.
+
+**MV1 — 800 VDC + Liquid Cooling Power-Thermal Optimization** extends that proof into the AI-era high-density infrastructure boundary, where electrical distribution and thermal management must be evaluated as one coupled system.
 
 | Milestone | Deliverable | Exit criteria | Status |
 |---|---|---|---|
@@ -14,7 +16,8 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 | S1 | Architecture + standards + canonical model | schemas, invariants and tests | IN PROGRESS |
 | S2 | Connector SDK | lifecycle, errors, quality, lineage, contract tests | IN PROGRESS |
 | S3 | Frontier | telemetry adapter + fixture/replay + validation | PLANNED |
-| **MV0** | First Verifiable Optimization | Frontier → canonical → quality/lineage → replay → baseline → counterfactual → optimization → verification/evidence | **PLANNED** |
+| **MV0** | First Verifiable Optimization | Frontier → canonical → replay → baseline → counterfactual → optimization → verification/evidence | **PLANNED** |
+| **MV1** | 800 VDC + liquid cooling co-optimization | coupled power/thermal topology → replay → counterfactual → deterministic optimization → evidence | **PLANNED** |
 | S4 | NLR/DOE | PUE/power/weather adapter + validation | PLANNED |
 | S5 | CSV/Parquet | deterministic batch ingestion + normalization | PLANNED |
 | S6 | MQTT + REST | protocol adapters + retry/idempotency tests | PLANNED |
@@ -40,6 +43,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Data-quality taxonomy.
 - Lineage contract.
 - Evidence Contract boundary for future optimization results.
+- Keep electrical and thermal telemetry addressable by common asset/time/lineage identifiers.
 
 ## S2 — Connector SDK
 
@@ -73,6 +77,24 @@ Supporting contracts:
 - `docs/EVIDENCE_CONTRACT.md`
 - `docs/REPLAY.md`
 
+## MV1 — 800 VDC + Liquid Cooling Power-Thermal Optimization
+
+- Define power regimes: `AC_LEGACY`, `AC_HYBRID_800VDC`, `NATIVE_800VDC`, `MV_TO_800VDC`.
+- Define thermal regimes: `AIR_LEGACY`, `EVAP_AIR_LEGACY`, `LIQUID_D2C`, `LIQUID_CLOSED_LOOP_DRY`, `LIQUID_HYBRID_EVAP`, `LIQUID_CHILLED`.
+- Model 800 VDC distribution, conversion, DC/DC and sidecar losses.
+- Model direct-to-chip liquid cooling, TCS/CDU and facility cooling loop.
+- Model dry cooler, chiller and optional external evaporative-assist heat rejection.
+- Keep internal evaporative air cooling out of the high-density AI reference path; retain it for legacy/historical cases.
+- Couple workload, electrical and thermal telemetry in replay/counterfactual scenarios.
+- Compare at least two complete power/thermal topologies under identical workload/environment inputs.
+- Benchmark conversion loss, cooling energy, water, thermal headroom, electrical risk, SLA risk and useful compute per facility kWh.
+- Extend Evidence with topology, power-regime and thermal-regime provenance.
+- Keep all electrical protection, grounding, thermal interlock and leak/flow constraints behind the safety/policy boundary.
+
+Supporting contract:
+
+- `docs/POWER_THERMAL_800VDC.md`
+
 ## S4 — NLR/DOE
 
 - Map PUE, IT power, cooling, HVAC, pump and weather fields.
@@ -96,20 +118,22 @@ Supporting contracts:
 - Counterfactual baseline.
 - Rule/PID benchmark.
 - Thermal/energy sanity constraints.
+- Power-thermal topology scenarios required by MV1.
 
 ## S8 — Optimization
 
-- Formal objective: energy cost + carbon + water + thermal risk + SLA risk + wear.
+- Formal objective: energy cost + carbon + water + thermal risk + electrical risk + SLA risk + wear.
 - Constraint registry.
 - Rule, PID, MPC and MILP baselines.
 - Safety validator before recommendation/control.
+- Power-thermal co-optimization benchmark before RL.
 
 ## S9 — DQN / RL
 
 - Add an explicit data-engineering/feature-store stage before RL experiments.
 - Port original DQN research into an isolated experiment package.
 - Double/Dueling/target-network/Huber improvements as applicable.
-- Compare against non-RL baselines.
+- Compare against non-RL baselines including MV1 deterministic optimization.
 - Reproducibility: seed, dataset version, environment version, metrics.
 
 ## S10 — Verification + Control
@@ -118,6 +142,7 @@ Supporting contracts:
 - Workload/weather/tariff normalization.
 - Recommendation audit trail.
 - Policy-gated actuation interface.
+- Electrical and thermal safety verification.
 
 ## S11 — Production SaaS
 
@@ -138,6 +163,7 @@ Supporting contracts:
 | `docs/BENCHMARK.md` | Common scientific/performance evaluation | Before performance claims |
 | `docs/EVIDENCE_CONTRACT.md` | Reproducible optimization evidence | MV0/S10 |
 | `docs/REPLAY.md` | Deterministic data reproduction | S3/MV0/S7/S9 |
+| `docs/POWER_THERMAL_800VDC.md` | 800 VDC + liquid cooling power-thermal boundary | MV1 |
 | `docs/AUDIT_REVALIDATION.md` | Snapshot finding lifecycle | Every external audit |
 | `docs/OTTO_BRAND_SYSTEM.md` | Technical brand/operational states | Product/dev UX |
 
@@ -149,4 +175,6 @@ Supporting contracts:
 - No unverified savings marketed as realized savings.
 - No claim of Uptime Institute certification.
 - No RL implementation before validated data/replay/non-RL baselines.
+- No assumption that 800 VDC is universally optimal; it must be demonstrated by scenario evidence.
+- No assumption that all data centers require liquid cooling; regime selection is explicit and workload/density dependent.
 - No connector expansion without a documented ROI/use-case rationale.
