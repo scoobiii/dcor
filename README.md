@@ -4,6 +4,8 @@
 
 **English | [Português](docs/project/README.pt-br.md) | [Español](docs/project/README.es.md) | [Français](docs/project/README.fr.md) | [日本語](docs/project/README.ja.md) | [简体中文](docs/project/README.zh.md) | [한국어](docs/project/README.ko.md) | [Tiếng Việt](docs/project/README.vi.md) | [Bahasa Indonesia](docs/project/README.id.md) | [Italiano](docs/project/README.it.md)**
 
+> **English is the canonical technical README. Translations are maintained as localized snapshots and may lag the canonical document.**
+
 **Connect. Measure. Simulate. Optimize. Verify.**
 
 **Open, vendor-neutral, polyglot by boundary, and test-gated by contract.**
@@ -20,7 +22,7 @@ DCOR is a platform for data-center energy, cooling, cost, carbon and operational
 
 **Otto is an otter because the animal maps naturally to DCOR's engineering problem:** intelligent use of water, agility in complex environments, interaction with infrastructure, and efficient adaptation. The mascot is deliberately technical rather than childish: Otto represents **efficiency, observability, cooling, resilience and controlled optimization**.
 
-The brand rule is simple: **Otto observes before acting, optimizes within constraints, and verifies the result.**
+The brand rule is simple: **Otto observes before acting, optimizes within constraints, and verifies the result.** The engineering brand system is documented in [docs/OTTO_BRAND_SYSTEM.md](docs/OTTO_BRAND_SYSTEM.md).
 
 ## Product boundary
 
@@ -45,6 +47,47 @@ flowchart LR
   R --> X[DCOR Verify]
   X --> D[API / Dashboard / Fleet]
 ```
+
+## Product proof path — MV0
+
+The first product-value milestone is **MV0 — First Verifiable Optimization**. It is deliberately placed before advanced RL/control/SaaS so the project proves measurable value with a reproducible vertical slice.
+
+```text
+Frontier
+   ↓
+Canonical
+   ↓
+Quality + Lineage
+   ↓
+Replay
+   ↓
+Baseline
+   ↓
+Counterfactual
+   ↓
+Optimization
+   ↓
+Safety / Policy
+   ↓
+Verification
+   ↓
+Evidence
+```
+
+The contracts are defined in:
+
+- [MV0 — First Verifiable Optimization](docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md)
+- [DCOR Evidence Contract](docs/EVIDENCE_CONTRACT.md)
+- [DCOR Replay](docs/REPLAY.md)
+- [DCOR Benchmark](docs/BENCHMARK.md)
+
+**Important:** illustrative values are not product results. DCOR must distinguish `POTENTIAL`, `PREDICTED`, `EXECUTED` and `VERIFIED` states, and only verified results may be presented as realized savings.
+
+## Use cases and connector prioritization
+
+The product scope is anchored in concrete use cases rather than an unbounded adapter catalog. See [docs/USE_CASES.md](docs/USE_CASES.md) for PUE, cooling, water, cost, carbon, workload-aware optimization, anomaly detection, baseline verification, data quality and multi-site cases.
+
+Connector work is prioritized with a documented ROI model in [docs/CONNECTOR_ROI.md](docs/CONNECTOR_ROI.md). Technical feasibility alone is not sufficient reason to add an adapter.
 
 ## Polyglot engineering strategy
 
@@ -109,18 +152,21 @@ Coverage ............. PASS
 DCOR LOCAL GATE: PASS
 ```
 
+On a successful gate, the validator also emits the compact `OTTO / VERIFIED` marker. The status art is informational; the gate remains machine-readable and is not dependent on terminal rendering.
+
 The same gate is used by CI. Current compatibility targets are documented in [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md); development instructions are in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 ## Delivery monitor
 
 This table is the **living delivery contract**. Status changes only when the corresponding implementation, tests, CI validation and evidence exist. Detailed file-level tracking lives in [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md).
 
-| Sprint | Scope | Status | Exit evidence |
+| Milestone | Scope | Status | Exit evidence |
 |---|---|---|---|
 | S0 | Baseline, audit, reproducibility, CI + local gate | **IN PROGRESS** | reproducible local/CI gate |
 | S1 | Clean Architecture + canonical contracts | **IN PROGRESS** | architecture + schema tests |
 | S2 | Universal Connector SDK | **IN PROGRESS** | SDK + contract tests |
 | S3 | Frontier connector | **PLANNED** | adapter + fixture + validation |
+| **MV0** | First Verifiable Optimization | **PLANNED** | baseline + counterfactual + verification/evidence |
 | S4 | NLR/DOE connector | **PLANNED** | adapter + fixture + validation |
 | S5 | CSV/Parquet connector | **PLANNED** | ingestion + normalization tests |
 | S6 | MQTT + REST connectors | **PLANNED** | protocol contract tests |
@@ -136,6 +182,15 @@ This table is the **living delivery contract**. Status changes only when the cor
 
 A sprint cannot become `DONE` merely because code was committed. The required files must exist, tests must pass, package coverage must meet **100%**, and the CI gate must validate the commit. LOC is monitored as engineering telemetry, **not as a quality or completion criterion**.
 
+## Engineering evidence
+
+The project now treats the following as first-class delivery artifacts:
+
+- **Replay** — deterministic recorded telemetry for regression, incident reproduction and algorithm comparison.
+- **Evidence** — machine-readable provenance for optimization predictions and verified savings.
+- **Benchmark** — common metrics for ingestion, normalization, quality, replay, baseline, optimization, safety, verification and performance.
+- **Audit revalidation** — external findings are snapshots and are reclassified as `OPEN`, `FIXED` or `SUPERSEDED` against current `HEAD`.
+
 ## Connector roadmap
 
 1. Frontier telemetry
@@ -143,7 +198,7 @@ A sprint cannot become `DONE` merely because code was committed. The required fi
 3. CSV / Parquet
 4. MQTT
 5. REST
-6. Additional BMS/DCIM/SCADA/EPMS adapters
+6. Additional BMS/DCIM/SCADA/EPMS adapters, subject to the Connector ROI Matrix
 
 ## Research and optimization
 
@@ -151,9 +206,11 @@ Optimization will be benchmarked in this order:
 
 **baseline → rules → PID/MPC/MILP → DQN → Double/Dueling DQN → PPO/SAC**, with workload, thermal, equipment, SLA, cost, carbon and water constraints represented explicitly.
 
+RL is not a substitute for validated data, replay, baselines or safety gates. Advanced RL work follows the first verifiable product path.
+
 ## Standards and governance
 
-See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md), [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md), and [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md).
+See [ARCHITECTURE.md](ARCHITECTURE.md), [STANDARDS.md](STANDARDS.md), [BACKLOG.md](BACKLOG.md), [docs/REUSE_MATRIX.md](docs/REUSE_MATRIX.md), [docs/DELIVERY_MANIFEST.md](docs/DELIVERY_MANIFEST.md), and [docs/AUDIT_REVALIDATION.md](docs/AUDIT_REVALIDATION.md).
 
 ## Repository layout
 
@@ -164,9 +221,9 @@ packages/             stable contracts and reusable libraries
 connectors/           source/protocol adapters
 digital-twin/         simulation and replay
 datasets/             manifests/fixtures, not uncontrolled data dumps
-research/             research adapters and experiments
+research/              research adapters and experiments
 hardware-lab/         physical/edge experiments
-docs/                 architecture, standards, development and runbooks
+docs/                 architecture, standards, product and runbooks
 benchmarks/           scientific comparisons
 tests/                cross-component tests
 infra/                deployment and operations
@@ -176,4 +233,4 @@ assets/               brand assets, including the DCOR mascot
 
 ## Status
 
-**Current gate: S0/S1/S2 foundation in progress.** The repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.**
+**Current gate: S0/S1/S2 foundation in progress.** The repository intentionally starts with the contract and ingestion layer. **Do not build the dashboard ahead of the canonical data model.** S3 and MV0 remain planned until their implementation and CI evidence exist.
