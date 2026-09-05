@@ -1,15 +1,20 @@
-# DCOR Backlog — S0 to S11
+# DCOR Backlog — S0 to S11 + MV0
 
 ## Delivery gate
 
 Every sprint has four gates: **implementation → tests → CI validation → evidence/documentation**. A sprint cannot be marked DONE without all four.
 
-| Sprint | Deliverable | Exit criteria | Status |
+## Product-value gate
+
+**MV0 — First Verifiable Optimization** is a cross-cutting vertical slice between foundation/connectivity and advanced optimization. It does not replace S0–S11; it proves the product thesis before the project commits to RL, control or SaaS complexity.
+
+| Milestone | Deliverable | Exit criteria | Status |
 |---|---|---|---|
 | S0 | Audit, baseline, repository contract, CI | clean repo baseline, CI runs on push | IN PROGRESS |
 | S1 | Architecture + standards + canonical model | schemas, invariants and tests | IN PROGRESS |
 | S2 | Connector SDK | lifecycle, errors, quality, lineage, contract tests | IN PROGRESS |
 | S3 | Frontier | telemetry adapter + fixture/replay + validation | PLANNED |
+| **MV0** | First Verifiable Optimization | Frontier → canonical → quality/lineage → replay → baseline → counterfactual → optimization → verification/evidence | **PLANNED** |
 | S4 | NLR/DOE | PUE/power/weather adapter + validation | PLANNED |
 | S5 | CSV/Parquet | deterministic batch ingestion + normalization | PLANNED |
 | S6 | MQTT + REST | protocol adapters + retry/idempotency tests | PLANNED |
@@ -25,6 +30,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Establish product definition and non-goals.
 - Establish CI-on-push gate.
 - Establish delivery monitor in README.
+- Revalidate external-audit findings against current HEAD.
 
 ## S1 — Contracts
 
@@ -33,6 +39,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Asset hierarchy and facility identity.
 - Data-quality taxonomy.
 - Lineage contract.
+- Evidence Contract boundary for future optimization results.
 
 ## S2 — Connector SDK
 
@@ -47,6 +54,24 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Implement adapter for the public Frontier telemetry schema.
 - Preserve 10-minute timestamps and source lineage.
 - Add replay fixture and quality tests.
+- Produce the first real canonical telemetry path.
+
+## MV0 — First Verifiable Optimization
+
+- Execute the complete vertical slice using Frontier telemetry.
+- Produce deterministic replay manifest.
+- Calculate a versioned baseline and counterfactual.
+- Run at least one deterministic non-RL optimization method.
+- Evaluate safety/policy constraints before recommendation.
+- Produce POTENTIAL/PREDICTED/EXECUTED/VERIFIED evidence without conflating states.
+- Publish a reproducible machine-readable evidence artifact.
+- Keep illustrative values separate from measured results.
+
+Supporting contracts:
+
+- `docs/MV0_FIRST_VERIFIABLE_OPTIMIZATION.md`
+- `docs/EVIDENCE_CONTRACT.md`
+- `docs/REPLAY.md`
 
 ## S4 — NLR/DOE
 
@@ -81,6 +106,7 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 
 ## S9 — DQN / RL
 
+- Add an explicit data-engineering/feature-store stage before RL experiments.
 - Port original DQN research into an isolated experiment package.
 - Double/Dueling/target-network/Huber improvements as applicable.
 - Compare against non-RL baselines.
@@ -103,6 +129,18 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - Security and dependency gates.
 - Release checklist.
 
+## Cross-cutting product artifacts
+
+| Artifact | Purpose | Gate |
+|---|---|---|
+| `docs/USE_CASES.md` | Concrete user/business problems | Product planning |
+| `docs/CONNECTOR_ROI.md` | Adapter prioritization and scope control | Before new connector |
+| `docs/BENCHMARK.md` | Common scientific/performance evaluation | Before performance claims |
+| `docs/EVIDENCE_CONTRACT.md` | Reproducible optimization evidence | MV0/S10 |
+| `docs/REPLAY.md` | Deterministic data reproduction | S3/MV0/S7/S9 |
+| `docs/AUDIT_REVALIDATION.md` | Snapshot finding lifecycle | Every external audit |
+| `docs/OTTO_BRAND_SYSTEM.md` | Technical brand/operational states | Product/dev UX |
+
 ## Explicit non-goals
 
 - No dashboard-first development.
@@ -110,3 +148,5 @@ Every sprint has four gates: **implementation → tests → CI validation → ev
 - No direct AI-to-actuator path.
 - No unverified savings marketed as realized savings.
 - No claim of Uptime Institute certification.
+- No RL implementation before validated data/replay/non-RL baselines.
+- No connector expansion without a documented ROI/use-case rationale.
